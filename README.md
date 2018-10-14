@@ -1,6 +1,6 @@
-##UPTIME MONITOR
+##  UPTIME MONITOR
 
-#OVERVIEW
+#   OVERVIEW
 
 An "uptime monitor" allows users to enter URLs they want monitored, and receive alerts
 when those resources "go down" or "come back up".
@@ -11,7 +11,7 @@ edit settings.
 We will also include functionality for sending as SMS alert to a user, rather than email.
 
 
-#REQUIREMENTS
+#   REQUIREMENTS
 
 1.	API listens on a port and accepts incoming HTTP requests for POST, GET, PUT, DELETE and HEAD.
 2.	API allows a client to connect, the create a new user, then edit and delete that user.
@@ -23,20 +23,20 @@ We will also include functionality for sending as SMS alert to a user, rather th
 
 We will be using twillio for SMS.
 
-#That's our backend spec
+#   That's our backend spec
 
-#HTTP
+#   HTTP
 The way the http server works is we first need to use the http module to define what the server does and then later on we need to tell the server to start listening on a specific port.
 Node JS module -> HTTP
 
-#URL
+#   URL
 Parsing Request paths:
     Which resources people are requesting when they send a request to the API? We need to parse the URL they are asking for.
 Node JS module -> URL
 
-#String decoder - payload
+#   String decoder - payload
 
-#Adding HTTPS
+#   Adding HTTPS
 1   SSL Certificate to use within the application to fascilitate the ssl handshake.
 2   In order to create the SSL certificate, using openssl.
 3   keygeneration.txt creates two different files, a key.pem and cert.pem
