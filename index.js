@@ -12,6 +12,7 @@ const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
+const _data = require('./lib/data');
 
 //Instatiating the http server
 const httpServer = http.createServer(function (request, response) {
@@ -106,8 +107,8 @@ var unifiedServer = function (request, response) {
 //Define Handlers
 var handlers = {};
 //Ping Handler
-handlers.ping = function (data, callback){
-    callback (200);
+handlers.ping = function (data, callback) {
+    callback(200);
 }
 //Not found handler
 handlers.notFound = function (data, callback) {

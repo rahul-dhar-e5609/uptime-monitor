@@ -37,8 +37,7 @@ Node JS module -> URL
 ##   String decoder - payload
 
 ##   Adding HTTPS
-1   SSL Certificate to use within the application to fascilitate the ssl handshake.
-2   In order to create the SSL certificate, using openssl.
-3   keygeneration.txt creates two different files, a key.pem and cert.pem
-Command is openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
-4   We will use these two files to create the https server.
+1.  SSL Certificate to use within the application to fascilitate the ssl handshake.
+2.  In order to create the SSL certificate, using openssl.
+3.  keygeneration.txt creates two different files, a key.pem and cert.pem. Command is openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+4.  We will use these two files to create the https server.
