@@ -1,6 +1,6 @@
-#  UPTIME MONITOR
+#  Uptime Monitor
 
-##   OVERVIEW
+##   Overview
 
 An "uptime monitor" allows users to enter URLs they want monitored, and receive alerts
 when those resources "go down" or "come back up".
@@ -11,7 +11,7 @@ edit settings.
 We will also include functionality for sending as SMS alert to a user, rather than email.
 
 
-##  REQUIREMENTS
+##  Requirements
 
 1.	API listens on a port and accepts incoming HTTP requests for POST, GET, PUT, DELETE and HEAD.
 2.	API allows a client to connect, the create a new user, then edit and delete that user.
