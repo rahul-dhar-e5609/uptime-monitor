@@ -21,7 +21,7 @@ We will also include functionality for sending as SMS alert to a user, rather th
 6.	API allows a signed in user t edit or delete any of their checks. Limit checks to 5.
 7.	In the background, workers perform all the "checks" at the appropriate times, and send alerts to the users when a check changes its state from "up" to "down", or vice versa. Checks should run once a minute.
 
-We will be using twillio for SMS.
+We will be using twilio for SMS.
 
 ##   That's our backend spec
 
