@@ -166,14 +166,42 @@ app.bindForms = function() {
         var elements = this.elements;
         for (var i = 0; i < elements.length; i++) {
           if (elements[i].type !== "submit") {
+            // Determine class of element and set value accordingly
+            var classOfElement =
+              typeof elements[i].classList.value == "string" &&
+              elements[i].classList.value.length > 0
+                ? elements[i].classList.value
+                : "";
             var valueOfElement =
-              elements[i].type == "checkbox"
+              elements[i].type == "checkbox" &&
+              classOfElement.indexOf("multiselect") == -1
                 ? elements[i].checked
-                : elements[i].value;
-            if (elements[i].name == "_method") {
+                : classOfElement.indexOf("intval") == -1
+                ? elements[i].value
+                : parseInt(elements[i].value);
+            var elementIsChecked = elements[i].checked;
+            // Override the method of the form if the input's name is _method
+            var nameOfElement = elements[i].name;
+            if (nameOfElement == "_method") {
               method = valueOfElement;
             } else {
-              payload[elements[i].name] = valueOfElement;
+              // Create an payload field named "method" if the elements name is actually httpmethod
+              if (nameOfElement == "httpmethod") {
+                nameOfElement = "method";
+              }
+              // If the element has the class "multiselect" add its value(s) as array elements
+              if (classOfElement.indexOf("multiselect") > -1) {
+                if (elementIsChecked) {
+                  payload[nameOfElement] =
+                    typeof payload[nameOfElement] == "object" &&
+                    payload[nameOfElement] instanceof Array
+                      ? payload[nameOfElement]
+                      : [];
+                  payload[nameOfElement].push(valueOfElement);
+                }
+              } else {
+                payload[nameOfElement] = valueOfElement;
+              }
             }
           }
         }
@@ -274,6 +302,11 @@ app.formResponseProcessor = function(formId, requestPayload, responsePayload) {
   if (formId == "accountEdit3") {
     app.logUserOut(false);
     window.location = "/account/deleted";
+  }
+
+  // If the user just created a new check successfully, redirect back to the dashboard
+  if (formId == "checksCreate") {
+    window.location = "/checks/all";
   }
 };
 
@@ -380,6 +413,11 @@ app.loadDataOnPage = function() {
   if (primaryClass == "accountEdit") {
     app.loadAccountEditPage();
   }
+
+  // Logic for dashboard page
+  if (primaryClass == "checksList") {
+    app.loadChecksListPage();
+  }
 };
 
 // Load the account edit page specifically
@@ -416,6 +454,100 @@ app.loadAccountEditPage = function() {
           );
           for (var i = 0; i < hiddenPhoneInputs.length; i++) {
             hiddenPhoneInputs[i].value = responsePayload.phone;
+          }
+        } else {
+          // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
+          app.logUserOut();
+        }
+      }
+    );
+  } else {
+    app.logUserOut();
+  }
+};
+
+// Load the dashboard page specifically
+app.loadChecksListPage = function() {
+  // Get the phone number from the current token, or log the user out if none is there
+  var phone =
+    typeof app.config.sessionToken.phone == "string"
+      ? app.config.sessionToken.phone
+      : false;
+  if (phone) {
+    // Fetch the user data
+    var queryStringObject = {
+      phone: phone
+    };
+    app.client.request(
+      undefined,
+      "api/users",
+      "GET",
+      queryStringObject,
+      undefined,
+      function(statusCode, responsePayload) {
+        if (statusCode == 200) {
+          // Determine how many checks the user has
+          var allChecks =
+            typeof responsePayload.checks == "object" &&
+            responsePayload.checks instanceof Array &&
+            responsePayload.checks.length > 0
+              ? responsePayload.checks
+              : [];
+          if (allChecks.length > 0) {
+            // Show each created check as a new row in the table
+            allChecks.forEach(function(checkId) {
+              // Get the data for the check
+              var newQueryStringObject = {
+                id: checkId
+              };
+              app.client.request(
+                undefined,
+                "api/checks",
+                "GET",
+                newQueryStringObject,
+                undefined,
+                function(statusCode, responsePayload) {
+                  if (statusCode == 200) {
+                    var checkData = responsePayload;
+                    // Make the check data into a table row
+                    var table = document.getElementById("checksListTable");
+                    var tr = table.insertRow(-1);
+                    tr.classList.add("checkRow");
+                    var td0 = tr.insertCell(0);
+                    var td1 = tr.insertCell(1);
+                    var td2 = tr.insertCell(2);
+                    var td3 = tr.insertCell(3);
+                    var td4 = tr.insertCell(4);
+                    td0.innerHTML = responsePayload.method.toUpperCase();
+                    td1.innerHTML = responsePayload.protocol + "://";
+                    td2.innerHTML = responsePayload.url;
+                    var state =
+                      typeof responsePayload.state == "string"
+                        ? responsePayload.state
+                        : "unknown";
+                    td3.innerHTML = state;
+                    td4.innerHTML =
+                      '<a href="/checks/edit?id=' +
+                      responsePayload.id +
+                      '">View / Edit / Delete</a>';
+                  } else {
+                    console.log("Error trying to load check ID: ", checkId);
+                  }
+                }
+              );
+            });
+
+            if (allChecks.length < 5) {
+              // Show the createCheck CTA
+              document.getElementById("createCheckCTA").style.display = "block";
+            }
+          } else {
+            // Show 'you have no checks' message
+            document.getElementById("noChecksMessage").style.display =
+              "table-row";
+
+            // Show the createCheck CTA
+            document.getElementById("createCheckCTA").style.display = "block";
           }
         } else {
           // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
