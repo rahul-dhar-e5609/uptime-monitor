@@ -1,5 +1,10 @@
 # Overview
 
+<a href="https://scan.coverity.com/projects/uptime-monitor">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/18508/badge.svg"/>
+</a>
+
 An "uptime monitor" allows users to enter URLs they want monitored, and receive alerts when those resources "go down" or "come back up".
 
 The app should be useable, so we will include features such as user sign in and sign up, edit settings.
